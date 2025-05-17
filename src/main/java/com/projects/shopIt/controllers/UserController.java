@@ -1,6 +1,7 @@
 package com.projects.shopIt.controllers;
 
 import com.projects.shopIt.dtos.RegisterUserRequest;
+import com.projects.shopIt.dtos.UpdateUserRequest;
 import com.projects.shopIt.dtos.UserDto;
 import com.projects.shopIt.mappers.UserMapper;
 import com.projects.shopIt.repositories.UserRepository;
@@ -58,5 +59,28 @@ public class UserController {
         return ResponseEntity.created(resourceUri).body(userDto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name = "id") Long id,
+            @RequestBody UpdateUserRequest request
+            ){
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
 
+        userMapper.update(request, user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    public ResponseEntity<Void> deleteUser(@PathVariable(name = "id") Long id) {
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build();
+    }
 }
