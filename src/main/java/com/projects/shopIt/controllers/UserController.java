@@ -1,12 +1,15 @@
 package com.projects.shopIt.controllers;
 
+import com.projects.shopIt.dtos.ChangePasswordRequest;
 import com.projects.shopIt.dtos.RegisterUserRequest;
 import com.projects.shopIt.dtos.UpdateUserRequest;
 import com.projects.shopIt.dtos.UserDto;
 import com.projects.shopIt.mappers.UserMapper;
 import com.projects.shopIt.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -48,7 +51,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(
-            @RequestBody RegisterUserRequest request,
+            @Valid @RequestBody RegisterUserRequest request,
             UriComponentsBuilder uriBuilder
             ){
         var user = userMapper.toEntity(request);
@@ -81,6 +84,26 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         userRepository.delete(user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/change-password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable(name = "id") Long id,
+            @RequestBody ChangePasswordRequest request
+            ) {
+
+        var user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (!user.getPassword().equals(request.getOldPassword())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        user.setPassword(request.getNewPassword());
+        userRepository.save(user);
         return ResponseEntity.noContent().build();
     }
 }
