@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: shopIt
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shopIt
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: true
+
+server:
+  port: 8081
