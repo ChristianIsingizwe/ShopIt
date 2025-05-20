@@ -1,7 +1,6 @@
 package com.projects.shopIt.services;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,7 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("${spring.jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secret;
 
     public String generateToken(String email) {
