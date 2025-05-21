@@ -1,5 +1,6 @@
 package com.projects.shopIt.services;
 
+import com.projects.shopIt.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,15 +16,26 @@ public class JwtService {
     @Value("${JWT_SECRET}")
     private String secret;
 
-    public String generateToken(String email) {
-        final long tokenExpiration = 86400;
+    public String generateAccessToken(User user) {
+        final long tokenExpiration = 300;
 
+        return generateAccessToken(user, tokenExpiration);
+    }
+
+    private String generateAccessToken(User user, long tokenExpiration) {
         return Jwts.builder()
-                .subject(email)
+                .subject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("name", user.getName())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000* tokenExpiration))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        final long tokenExpiration = 604800;
+        return generateAccessToken(user, tokenExpiration);
     }
 
     public boolean validateToken(String token) {
@@ -44,7 +56,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    public String getEmailFromToken(String token) {
-        return getClaims(token).getSubject();
+    public Long getUserIdFromToken (String token) {
+        return Long.valueOf(getClaims(token).getSubject());
     }
 }
