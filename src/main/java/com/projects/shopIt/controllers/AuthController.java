@@ -30,11 +30,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         authenticationManager.authenticate(
+
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
                         loginRequest.getPassword()
                 )
         );
+        var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
         var token = jwtService.generateToken(loginRequest.getEmail());
 
 
