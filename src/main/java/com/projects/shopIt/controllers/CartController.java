@@ -1,9 +1,6 @@
 package com.projects.shopIt.controllers;
 
-import com.projects.shopIt.dtos.AddItemToCartRequest;
-import com.projects.shopIt.dtos.CartDto;
-import com.projects.shopIt.dtos.CartItemDto;
-import com.projects.shopIt.dtos.UpdateCartItemRequest;
+import com.projects.shopIt.dtos.*;
 import com.projects.shopIt.exceptions.CartNotFoundException;
 import com.projects.shopIt.exceptions.ProductNotFoundException;
 import com.projects.shopIt.services.CartService;
@@ -75,12 +72,16 @@ public class CartController {
     }
 
     @ExceptionHandler(CartNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCartNotFound() {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Cart not found"));
+    public ResponseEntity<ErrorDto> handleCartNotFound() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ErrorDto("Cart not found")
+        );
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductNotFound() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Product not found in the cart"));
+    public ResponseEntity<ErrorDto> handleProductNotFound() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorDto("Product not found")
+        );
     }
 }

@@ -119,6 +119,4 @@ public class UserController {
         userRepository.save(user);
         return ResponseEntity.noContent().build();
     }
-
-
 }
