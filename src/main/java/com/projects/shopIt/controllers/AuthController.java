@@ -1,5 +1,6 @@
 package com.projects.shopIt.controllers;
 
+import com.projects.shopIt.config.JwtConfig;
 import com.projects.shopIt.dtos.JwtResponse;
 import com.projects.shopIt.dtos.LoginRequest;
 import com.projects.shopIt.dtos.UserDto;
@@ -27,6 +28,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final JwtConfig jwtConfig;
 
 
     @PostMapping("/login")
@@ -47,7 +49,7 @@ public class AuthController {
         var cookie = new Cookie("refreshToken", refreshToken.toString());
         cookie.setHttpOnly(true);
         cookie.setPath("/auth/refresh");
-        cookie.setMaxAge(604800);
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
         cookie.setSecure(true);
         response.addCookie(cookie);
 
