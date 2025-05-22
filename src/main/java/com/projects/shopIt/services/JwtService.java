@@ -19,14 +19,15 @@ public class JwtService {
     public String generateAccessToken(User user) {
         final long tokenExpiration = 300;
 
-        return generateAccessToken(user, tokenExpiration);
+        return generateToken(user, tokenExpiration);
     }
 
-    private String generateAccessToken(User user, long tokenExpiration) {
+    private String generateToken(User user, long tokenExpiration) {
         return Jwts.builder()
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("name", user.getName())
+                .claim("role", user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -35,7 +36,7 @@ public class JwtService {
 
     public String generateRefreshToken(User user) {
         final long tokenExpiration = 604800;
-        return generateAccessToken(user, tokenExpiration);
+        return generateToken(user, tokenExpiration);
     }
 
     public boolean validateToken(String token) {

@@ -4,6 +4,7 @@ import com.projects.shopIt.dtos.ChangePasswordRequest;
 import com.projects.shopIt.dtos.RegisterUserRequest;
 import com.projects.shopIt.dtos.UpdateUserRequest;
 import com.projects.shopIt.dtos.UserDto;
+import com.projects.shopIt.entities.Role;
 import com.projects.shopIt.mappers.UserMapper;
 import com.projects.shopIt.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -65,6 +66,7 @@ public class UserController {
 
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
